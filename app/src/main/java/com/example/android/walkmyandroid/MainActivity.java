@@ -73,7 +73,10 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
         mLocationCallback = new LocationCallback(){
             @Override
             public void onLocationResult(LocationResult locationResult) {
-
+                if (mTrackingLocation) {
+                    new FetchAddressTask(MainActivity.this, MainActivity.this)
+                            .execute(locationResult.getLastLocation());
+                }
             }
         };
     }
@@ -86,20 +89,23 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
             }, REQUEST_LOCATION_PERMISSION);
         } else {
             mTrackingLocation = true;
-            mFusedLocationClient.getLastLocation()
+            mFusedLocationClient.requestLocationUpdates
+                    (getLocationRequest(), mLocationCallback,
+                            null /* Looper */);
+            /*mFusedLocationClient.getLastLocation()
             .addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null){
-                        /*mLocationTV.setText(
+                        *//*mLocationTV.setText(
                                 "Latitude: "+location.getLatitude()+"\nLongitude: "+location.getLongitude()+"" +
                                         "\nTimestamp: "+location.getTime()
-                        );*/
+                        );*//*
 
                         new FetchAddressTask(MainActivity.this, MainActivity.this).execute(location);
                     }
                 }
-            });
+            });*/
             mLocationButton.setText("Stop tracking location");
             mRotateAnim.start();
         }
@@ -138,5 +144,22 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
     @Override
     public void onTaskCompleted(String result) {
         mLocationTV.setText(result);
+    }
+
+    @Override
+    protected void onResume() {
+        if (mTrackingLocation) {
+            startTrackingLocation();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (mTrackingLocation) {
+            stopTrackingLocation();
+            mTrackingLocation = true;
+        }
+        super.onPause();
     }
 }
