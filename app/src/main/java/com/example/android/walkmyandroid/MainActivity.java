@@ -31,7 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
     private AnimatorSet mRotateAnim;
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean mTrackingLocation;
+    private LocationCallback mLocationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,12 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
                 }
             }
         });
+        mLocationCallback = new LocationCallback(){
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+
+            }
+        };
     }
 
     private void startTrackingLocation(){
