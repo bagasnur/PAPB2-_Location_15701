@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean mTrackingLocation;
     private LocationCallback mLocationCallback;
+    private static final String TRACKING_LOCATION_KEY = "tracking_location";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
 
         mRotateAnim.setTarget(mAndroidImageView);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (savedInstanceState != null) {
+            mTrackingLocation = savedInstanceState.getBoolean(
+                    TRACKING_LOCATION_KEY);
+        }
         mLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +131,12 @@ public class MainActivity extends AppCompatActivity implements FetchAddressTask.
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(TRACKING_LOCATION_KEY, mTrackingLocation);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
